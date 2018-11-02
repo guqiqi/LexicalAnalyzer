@@ -1,4 +1,4 @@
-package util;
+package constant;
 
 public class SpecificWords {
     // 字母为80，整数为81，小数为82，任意字符串为83

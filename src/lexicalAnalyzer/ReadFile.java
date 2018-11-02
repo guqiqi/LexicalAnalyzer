@@ -1,14 +1,15 @@
 package lexicalAnalyzer;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class ReadFile {
     // 处理输入文件,转换成char数组,以\0结尾
-    public char[] readFile(String filename) throws IOException {
+    public static ArrayList<Character> readFile(String filename) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))));
         String line;
         int index = 0;
-        char input[] = new char[500];
+        ArrayList<Character> input = new ArrayList<>();
         char[] tempChars;
 
         while (null != (line = br.readLine())) {
@@ -17,12 +18,11 @@ public class ReadFile {
                 if (c == '\t') {
                     continue;
                 }
-                input[index++] = c;
+                input.add(c);
             }
-            input[index++] = '\n';
+            input.add('\n');
         }
 
-        input[index] = '\0';
         br.close();
 
         return input;

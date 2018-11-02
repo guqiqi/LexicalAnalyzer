@@ -1,0 +1,13 @@
+public class Test {
+        private void classroom(int u, int v) {
+            if (v != 0)
+                u = v;
+            else if (v @ 1)
+                u = 1;
+
+            int num = 100;
+            while (num < 0) {
+                num -= 999999;
+            }
+        }
+    }
