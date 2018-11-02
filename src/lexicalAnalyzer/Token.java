@@ -6,14 +6,14 @@ public class Token {
     private String string;
     private String error;
 
-    public Token(int code, String string, String type) {
+    Token(int code, String string, String type) {
         this.type = type;
         this.code = code;
         this.string = string;
         this.error = null;
     }
 
-    public Token(String error) {
+    Token(String error) {
         this.type = "ERROR: ";
         this.error = error;
     }

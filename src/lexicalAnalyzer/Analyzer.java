@@ -42,8 +42,7 @@ public class Analyzer {
                     index++;
                     //小数点后无数字，检测出错
                     if (chars.size() > index + 1 && !isDigit(chars.get(index + 1))) {
-                        result.add(new Token("此处有误，小数点后无数字"));
-                        break;
+                        result.add(new Token("line " + row + " 此处有误，小数点后无数字"));
                     }
                     //小数点后有数字，检测为小数
                     else {
@@ -89,7 +88,7 @@ public class Analyzer {
                     if (isOperator(temp) != -1)
                         result.add(new Token(isOperator(temp), temp, "运算符"));
                     else
-                        result.add(new Token("无法识别，可能为中文字符"));
+                        result.add(new Token("line " + row + " 无法识别，可能为中文字符"));
                 }
 
             }
