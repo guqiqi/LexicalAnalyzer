@@ -8,7 +8,6 @@ public class ReadFile {
     public static ArrayList<Character> readFile(String filename) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))));
         String line;
-        int index = 0;
         ArrayList<Character> input = new ArrayList<>();
         char[] tempChars;
 

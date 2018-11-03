@@ -6,12 +6,14 @@ import java.util.ArrayList;
 
 public class Analyzer {
     public static ArrayList<Token> analyze(ArrayList<Character> chars) {
+        // 处理注释
+        chars = removeComment(chars);
         // 结果的token序列
         ArrayList<Token> result = new ArrayList<>();
         // index记录源代码的字符数组扫描到的数组下标
         int index = 0;
         // row记录目前行数
-        int row = 0;
+        int row = 1;
         // temp用于存储临时的字符串，后面会来判断是否有保留字或者标识符
         String temp = "";
         // 当未扫描到终结符则一直往下扫描
@@ -30,8 +32,13 @@ public class Analyzer {
                 else
                     result.add(new Token(83, temp, "标识符"));
             }
-            // 当开头为数字时，可能为整数或小数
-            else if (isDigit(chars.get(index))) {
+            // 当开头为数字或负号时，可能为整数或小数
+            else if (isDigit(chars.get(index)) || (chars.get(index) == '-' && index < chars.size() - 1 && isDigit
+                    (chars.get(index + 1)))) {
+                if(chars.get(index) == '-'){
+                    temp += chars.get(index);
+                    index++;
+                }
                 temp += chars.get(index);
                 while (chars.size() > index + 1 && isDigit(chars.get(index + 1))) {
                     index++;
@@ -52,11 +59,11 @@ public class Analyzer {
                             temp += chars.get(index);
                         }
                     }
-                    result.add(new Token(83, temp, "标识符"));
+                    result.add(new Token(82, temp, "小数  "));
                 }
                 //无小数点，检测为整数
                 else {
-                    result.add(new Token(81, temp, "整数"));
+                    result.add(new Token(81, temp, "整数  "));
                 }
             }
             // 换行符
@@ -70,7 +77,7 @@ public class Analyzer {
                  * 匹配成功则continue循环，匹配失败则继续扫描
                  */
                 if (isDivide(temp) != -1) {
-                    result.add(new Token(isDivide(temp), temp, "分界符"));
+                    result.add(new Token(isDivide(temp), temp, "边界符"));
                     temp = "";
                     index++;
                     continue;
@@ -99,38 +106,34 @@ public class Analyzer {
         return result;
     }
 
-
-    private static char[] removeComment(char[] chars) {
-        char[] newChar = new char[10000];
-        int index = 0;
-        if (chars.length != 0) {
-            for (int i = 0; i < chars.length; i++) {
+    private static ArrayList<Character> removeComment(ArrayList<Character> chars) {
+        ArrayList<Character> newChar = new ArrayList<>();
+        if (chars.size() != 0) {
+            for (int i = 0; i < chars.size(); i++) {
                 //去掉//注释后的一整行
-                if (chars[i] == '/' && i < chars.length - 1 && chars[i + 1] == '/') {
-                    while (chars[i] != '\n') {
+                if (chars.get(i) == '/' && i < chars.size() - 1 && chars.get(i + 1) == '/') {
+                    while (chars.get(i) != '\n') {
                         i++;
                     }
+                    newChar.add('\n');
                 }
                 //去掉/**/型注释中间的字符，若只检测到/*，未检测到*/，则提示注释有误
-                if (chars[i] == '/' && chars[i + 1] == '*') {
+                else if (chars.get(i) == '/' && i < chars.size() - 1 && chars.get(i + 1) == '*') {
                     i = i + 2;
-                    while (chars[i] != '*' || chars[i + 1] != '/') {
+                    while (i < chars.size() - 1 && (chars.get(i)!= '*' || chars.get(i + 1) != '/')) {
                         i++;
-                        if (i == (chars.length - 1)) {
+                        if (i == (chars.size() - 2)) {
                             System.out.println("注释有误，未找到注释尾");
-                            char[] error = {};
-                            return error;
+                            System.exit(0);
                         }
                     }
                     i = i + 2;
+                    newChar.add('\n');
                 }
-                if (chars[i] != '\n' && chars[i] != '\r' && chars[i] != '\t') {
-                    newChar[index] = chars[i];
-                    index++;
+                else {
+                    newChar.add(chars.get(i));
                 }
             }
-            index++;
-            newChar[index] = '\0';
         }
         return newChar;
     }
